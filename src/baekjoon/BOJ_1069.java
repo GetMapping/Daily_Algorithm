@@ -76,6 +76,12 @@ class BOJ_1069 {
             if (count > max) {
                 maxString = key;
                 max = count;
+                continue;
+            }
+
+            if (count == max && Math.min(maxString.charAt(0), key.charAt(0)) == (int) key.charAt(0)) {
+                maxString = key;
+                max = count;
             }
         }
 
