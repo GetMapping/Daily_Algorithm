@@ -26,16 +26,16 @@ public class PMS_64062 {
     }
 
     public static boolean canAcrossRiver(int[] stones, int k, int friends) {
-        int zeroCount = 0;
+        int skip = 0;
 
         for (int stone : stones) {
             if (stone - friends < 0) {
-                zeroCount++;
+                skip++;
             } else {
-                zeroCount = 0;
+                skip = 0;
             }
 
-            if (zeroCount == k) {
+            if (skip == k) {
                 return false;
             }
         }
