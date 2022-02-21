@@ -6,8 +6,8 @@ import java.io.InputStreamReader;
 
 public class BOJ_16918 {
 
-    private static int[] moveHeight = {1, -1, 0, 0};
-    private static int[] moveWidth = {0, 0, 1, -1};
+    private static final int[] moveHeight = {1, -1, 0, 0};
+    private static final int[] moveWidth = {0, 0, 1, -1};
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
