@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 public class BOJ_1504 {
+
+    private static final int INF = 200000000;
     private static int nodeQuantity;
     private static int edgeQuantity;
     private static int mustPassNodeA;
@@ -28,14 +30,15 @@ public class BOJ_1504 {
 
         edges = new HashMap<>();
 
+        for (int i = 1; i <= nodeQuantity; i++) {
+            edges.put(i, new ArrayList<>());
+        }
+
         for (int i = 0; i < edgeQuantity; i++) {
             input = bufferedReader.readLine().split(" ");
             int start = Integer.parseInt(input[0]);
             int end = Integer.parseInt(input[1]);
             int weight = Integer.parseInt(input[2]);
-
-            edges.putIfAbsent(start, new ArrayList<>());
-            edges.putIfAbsent(end, new ArrayList<>());
 
             edges.get(start).add(new Edge(end, weight));
             edges.get(end).add(new Edge(start, weight));
@@ -44,8 +47,6 @@ public class BOJ_1504 {
         input = bufferedReader.readLine().split(" ");
         mustPassNodeA = Integer.parseInt(input[0]);
         mustPassNodeB = Integer.parseInt(input[1]);
-
-        dist = new int[nodeQuantity + 1];
 
         //1 -> A -> B -> Target
         int answerAB = 0;
@@ -59,7 +60,7 @@ public class BOJ_1504 {
         answerBA += dijkstra(mustPassNodeB, mustPassNodeA);
         answerBA += dijkstra(mustPassNodeA, nodeQuantity);
 
-        if (answerAB >= Integer.MAX_VALUE && answerBA >= Integer.MAX_VALUE) {
+        if (answerAB >= INF && answerBA >= INF) {
             System.out.println(-1);
         } else {
             System.out.println(Math.min(answerAB, answerBA));
@@ -67,26 +68,31 @@ public class BOJ_1504 {
     }
 
     public static int dijkstra(int start, int end) {
-        Arrays.fill(dist, Integer.MAX_VALUE);
-
         PriorityQueue<Edge> queue = new PriorityQueue<>(Comparator.comparingInt(Edge::getWeight));
         queue.add(new Edge(start, 0));
+
+        dist = new int[nodeQuantity + 1];
+        Arrays.fill(dist, INF);
         dist[start] = 0;
 
         while (!queue.isEmpty()) {
             Edge poll = queue.poll();
-            if (poll.getWeight() > dist[poll.getEnd()]) {
+            int target = poll.getEnd();
+            int targetWeight = poll.getWeight();
+
+            if (targetWeight > dist[target]) {
                 continue;
             }
 
-            List<Edge> linked = edges.get(start);
+            List<Edge> linked = edges.get(poll.getEnd());
 
-            if (linked != null) {
-                for (Edge next : linked) {
-                    if (poll.getWeight() + next.getWeight() < dist[next.getEnd()]) {
-                        dist[next.getEnd()] = poll.getWeight() + next.getWeight();
-                        queue.add(new Edge(next.getEnd(), dist[next.getEnd()]));
-                    }
+            for (Edge next : linked) {
+                int nextEnd = next.getEnd();
+                int nextWeight = next.getWeight();
+
+                if (targetWeight + nextWeight < dist[nextEnd]) {
+                    dist[nextEnd] = targetWeight + nextWeight;
+                    queue.add(new Edge(nextEnd, dist[nextEnd]));
                 }
             }
         }
