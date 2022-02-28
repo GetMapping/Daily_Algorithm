@@ -1,77 +1,77 @@
 package baekjoon;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
+import java.util.StringTokenizer;
 
 class BOJ_1325 {
 
-    private static boolean[] visited;
-    private static HashMap<Integer, List<Integer>> nodes;
+    private static int n;
+    private static int[] result;
+    private static ArrayList<Integer>[] map;
 
     public static void main(String[] args) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-        String[] input = bufferedReader.readLine().split(" ");
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int quantity = Integer.parseInt(input[0]);
-        int edge = Integer.parseInt(input[1]);
+        n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
 
-        nodes = new HashMap<>();
+        map = new ArrayList[n + 1];
 
-        for (int i = 1; i <= quantity; i++) {
-            nodes.put(i, new ArrayList<>());
+        result = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            map[i] = new ArrayList<>();
+        }
+        for (int i = 0; i < m; i++) {
+            st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+
+            map[a].add(b);
         }
 
-        for (int i = 0; i < edge; i++) {
-            input = bufferedReader.readLine().split(" ");
-            int a = Integer.parseInt(input[0]);
-            int b = Integer.parseInt(input[1]);
-            nodes.get(b).add(a);
+        for (int i = 1; i <= n; i++) {
+            bfs(i);
         }
 
-        int[] hack = new int[quantity + 1];
-        int maxValue = 0;
-        for (int i = 1; i <= quantity; i++) {
-            visited = new boolean[quantity + 1];
-            int hackQuantity = bfs(i);
+        int max = Integer.MIN_VALUE;
+        for (int i = 1; i <= n; i++) {
+            max = Math.max(result[i], max);
+        }
 
-            hack[i] = hackQuantity;
-            if (hackQuantity > maxValue) {
-                maxValue = hackQuantity;
+        for (int i = 1; i < n + 1; i++) {
+            if (max == result[i]) {
+                bw.write(i + " ");
             }
         }
 
-        for (int i = 1; i < hack.length; i++) {
-            if (hack[i] == maxValue) {
-                System.out.print(i + " ");
-            }
-        }
+        bw.flush();
+        bw.close();
     }
 
-    public static int bfs(int start) {
-        Queue<Integer> queue = new LinkedList<>();
+    static void bfs(int start) {
+        Queue<Integer> q = new LinkedList<>();
+        boolean[] check = new boolean[n + 1];
+        q.add(start);
+        check[start] = true;
 
-        visited[start] = true;
-        queue.add(start);
-        int count = 1;
-
-        while (!queue.isEmpty()) {
-            Integer poll = queue.poll();
-            for (Integer linked : nodes.get(poll)) {
-                if (!visited[linked]) {
-                    queue.add(linked);
-                    visited[linked] = true;
-                    count++;
+        while (!q.isEmpty()) {
+            int now = q.poll();
+            for (int next : map[now]) {
+                if (!check[next]) {
+                    check[next] = true;
+                    result[next]++;
+                    q.add(next);
                 }
             }
         }
-
-        return count;
     }
 }
-//자바라서 시간초과란다....너무해...
