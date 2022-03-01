@@ -68,6 +68,4 @@ public class BOJ_10816 {
 
         return left;
     }
-
-
 }
